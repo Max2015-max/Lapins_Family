@@ -1,11 +1,299 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-<title>Семья Лапиных</title>
+<meta charset="UTF-8">
+
+<title>Генеалогическое дерево семьи Лапиных</title>
+
+<style>
+
+body{
+background:#efe4c8;
+font-family:Georgia;
+padding:30px;
+}
+
+h1{
+text-align:center;
+color:#4b2d14;
+}
+
+h2{
+text-align:center;
+color:#8b5a2b;
+}
+
+h3{
+margin:5px;
+}
+
+#tree{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+}
+
+.person{
+width:280px;
+background:#f7edd6;
+border:2px solid #b78c62;
+border-radius:15px;
+padding:15px;
+box-shadow:3px 3px 10px gray;
+cursor:pointer;
+}
+
+.person:hover{
+transform:scale(1.03);
+transition:0.3s;
+}
+
+.description{
+margin-top:10px;
+color:#5c4023;
+}
+
+</style>
+
 </head>
+
 <body>
-<h1>Официальный сайт семьи Лапиных</h1>
-<p>XIX–XXI век</p>
-<p>Сайт находится в разработке.</p>
+
+<h1>Семья Лапиных</h1>
+
+<h2>XIX-XXI век</h2>
+
+<div id="tree"></div>
+
+<script>
+
+let familyTree=[
+
+// 1 поколение
+
+{
+name:"Василий Емельянович Лапин",
+generation:1,
+description:"Основатель рода."
+},
+
+// 2 поколение
+
+{
+name:"Надежда",
+generation:2
+},
+
+{
+name:"Борис",
+generation:2
+},
+
+{
+name:"Георгий",
+generation:2
+},
+
+{
+name:"Владимир",
+generation:2
+},
+
+{
+name:"Леонид",
+generation:2
+},
+
+{
+name:"Сергей",
+generation:2
+},
+
+// 3 поколение
+
+{
+name:"Евгения",
+generation:3
+},
+
+{
+name:"Анастасия",
+generation:3
+},
+
+{
+name:"Вера",
+generation:3
+},
+
+{
+name:"Тамара",
+generation:3
+},
+
+{
+name:"Георгий",
+generation:3
+},
+
+{
+name:"Галина",
+generation:3
+},
+
+{
+name:"Нина",
+generation:3
+},
+
+{
+name:"Алла",
+generation:3
+},
+
+{
+name:"Михаил",
+generation:3
+},
+
+// 4 поколение
+
+{
+name:"Александр",
+generation:4
+},
+
+{
+name:"Юрий",
+generation:4
+},
+
+{
+name:"Наталья",
+generation:4
+},
+
+{
+name:"Нина",
+generation:4
+},
+
+{
+name:"Сергей",
+generation:4
+},
+
+{
+name:"Игорь",
+generation:4,
+description:"Предок ветви Дмитрия и Максима."
+},
+
+// 5 поколение
+
+{
+name:"Евгения",
+generation:5
+},
+
+{
+name:"Владимир",
+generation:5
+},
+
+{
+name:"Михаил",
+generation:5
+},
+
+{
+name:"Татьяна",
+generation:5
+},
+
+{
+name:"Анастасия",
+generation:5
+},
+
+{
+name:"Елена",
+generation:5
+},
+
+{
+name:"Владимир",
+generation:5
+},
+
+{
+name:"Мария",
+generation:5
+},
+
+{
+name:"Дмитрий Игоревич Лапин",
+generation:5,
+description:"Сын Игоря. Санкт-Петербург."
+},
+
+// 6 поколение
+
+{
+name:"Олег",
+generation:6
+},
+
+{
+name:"Игорь Дмитриевич Лапин",
+generation:6,
+description:"Сын Дмитрия Игоревича Лапина."
+},
+
+{
+name:"Максим Дмитриевич Лапин",
+generation:6,
+born:"2015",
+description:"Родился в 2015 году. Сын Дмитрия Игоревича Лапина."
+}
+
+];
+
+
+let tree=document.getElementById("tree");
+
+
+familyTree.forEach(function(person){
+
+tree.innerHTML += `
+
+<div class="person">
+
+<h3>${person.name}</h3>
+
+<p><b>Поколение:</b> ${person.generation}</p>
+
+${person.born ?
+`<p><b>Год рождения:</b> ${person.born}</p>`
+:""}
+
+<div class="description">
+
+${person.description ?
+person.description :
+"Информация находится в разработке."}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+</script>
+
 </body>
 </html>
