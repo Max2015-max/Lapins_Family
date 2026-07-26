@@ -18,12 +18,21 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            min-width: max-content;
+            min-height: 100vh;
             background: #efe4c8;
-            font-family: Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             color: #4b2d14;
-            padding: 40px;
+            padding: 35px 20px;
+            overflow-x: auto;
+        }
+
+        body.modal-open {
+            overflow: hidden;
         }
 
         h1 {
@@ -35,29 +44,43 @@
         h2 {
             text-align: center;
             font-size: 22px;
-            margin-bottom: 50px;
+            margin-bottom: 45px;
             color: #8b5a2b;
+            font-weight: normal;
         }
 
-        /* ДЕРЕВО */
+        /*
+        ==================================================
+        ГЕНЕАЛОГИЧЕСКОЕ ДЕРЕВО
+        ==================================================
+        */
+
+        .tree-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            padding: 10px 0 25px;
+        }
 
         .tree {
             display: flex;
             justify-content: center;
+            width: max-content;
+            min-width: 100%;
+            padding: 0 20px;
         }
 
         .tree ul {
-            padding-top: 25px;
             position: relative;
             display: flex;
             justify-content: center;
+            padding-top: 25px;
         }
 
         .tree li {
+            position: relative;
             list-style: none;
             text-align: center;
-            position: relative;
-            padding: 20px 8px 0 8px;
+            padding: 20px 8px 0;
         }
 
         .tree li::before,
@@ -66,9 +89,9 @@
             position: absolute;
             top: 0;
             right: 50%;
-            border-top: 2px solid #8b6d45;
             width: 50%;
             height: 25px;
+            border-top: 2px solid #8b6d45;
         }
 
         .tree li::after {
@@ -108,211 +131,282 @@
             position: absolute;
             top: 0;
             left: 50%;
-            border-left: 2px solid #8b6d45;
             width: 0;
             height: 25px;
+            border-left: 2px solid #8b6d45;
         }
 
         .person {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 175px;
+            min-height: 43px;
+            padding: 9px 15px;
+
             background: #f9efd8;
-            padding: 10px 18px;
             border: 2px solid #8b6d45;
             border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
+
+            color: #4b2d14;
+            font-family: inherit;
+            font-size: 15px;
             font-weight: bold;
-            min-width: 180px;
+            text-align: center;
+
+            cursor: pointer;
+            transition:
+                transform 0.2s,
+                background 0.2s,
+                box-shadow 0.2s;
         }
 
-        .person:hover {
-            background: #fff7e8;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+        .person:hover,
+        .person:focus-visible {
+            background: #fff8e9;
+            transform: scale(1.04);
+            box-shadow: 0 5px 14px rgba(75, 45, 20, 0.25);
+            outline: none;
         }
 
-        /* ЗАТЕМНЕНИЕ ЗА ОКНОМ */
+        .person.has-biography::after {
+            content: "●";
+            margin-left: 8px;
+            color: #8b5a2b;
+            font-size: 8px;
+        }
+
+        /*
+        ==================================================
+        МОДАЛЬНОЕ ОКНО БИОГРАФИИ
+        ==================================================
+        */
 
         #overlay {
             position: fixed;
             inset: 0;
-            display: none;
-            background: rgba(0, 0, 0, 0.58);
             z-index: 9998;
+
+            display: none;
+
+            background: rgba(32, 20, 10, 0.68);
+            backdrop-filter: blur(2px);
         }
 
-        /* БОЛЬШОЕ ОКНО БИОГРАФИИ */
+        #overlay.open {
+            display: block;
+        }
 
-        #info {
+        #biography-modal {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            z-index: 9999;
 
             display: none;
 
-            width: min(900px, calc(100vw - 30px));
-            max-height: calc(100vh - 30px);
-            overflow-y: auto;
+            width: min(960px, calc(100vw - 28px));
+            max-height: calc(100vh - 28px);
+
+            transform: translate(-50%, -50%);
+            overflow: hidden;
 
             background: #fffaf0;
             border: 3px solid #8b6d45;
-            border-radius: 14px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-
-            z-index: 9999;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
         }
 
-        .info-header {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-
+        #biography-modal.open {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
+            flex-direction: column;
+        }
 
-            padding: 18px 22px;
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+
+            flex-shrink: 0;
+            padding: 17px 20px;
 
             background: #f9efd8;
             border-bottom: 2px solid #8b6d45;
         }
 
-        #title {
+        #person-name {
             margin: 0;
             font-size: 28px;
-            line-height: 1.2;
+            line-height: 1.25;
         }
 
-        #close {
+        #close-modal {
             display: flex;
             align-items: center;
             justify-content: center;
 
             flex-shrink: 0;
-
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
 
             border: none;
             border-radius: 50%;
 
             background: #8b6d45;
-            color: white;
+            color: #ffffff;
 
             font-size: 28px;
             line-height: 1;
 
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        #close:hover {
-            background: #654725;
+        #close-modal:hover,
+        #close-modal:focus-visible {
+            background: #60401f;
+            outline: none;
         }
 
-        .info-content {
+        .modal-body {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 28px;
-            padding: 25px;
+            grid-template-columns: minmax(220px, 310px) minmax(0, 1fr);
+            gap: 27px;
+
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .photo-column {
+            min-width: 0;
         }
 
         #person-photo {
             display: none;
 
             width: 100%;
-            max-height: 500px;
+            max-height: 520px;
 
             object-fit: contain;
 
             background: #efe4c8;
             border: 2px solid #8b6d45;
-            border-radius: 10px;
+            border-radius: 11px;
         }
 
-        #years {
+        #photo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            min-height: 250px;
+            padding: 25px;
+
+            background: #f2e7cc;
+            border: 2px dashed #a68760;
+            border-radius: 11px;
+
+            color: #806447;
+            font-size: 17px;
+            text-align: center;
+        }
+
+        .biography-column {
+            min-width: 0;
+        }
+
+        #person-years {
             margin-bottom: 15px;
             color: #8b5a2b;
             font-size: 20px;
             font-weight: bold;
         }
 
-        #text {
+        #person-biography {
+            color: #4b2d14;
             font-size: 17px;
-            line-height: 1.65;
+            line-height: 1.68;
             text-align: left;
         }
 
-        #text p {
+        #person-biography p {
             margin-bottom: 15px;
         }
 
-        #text p:last-child {
+        #person-biography p:last-child {
             margin-bottom: 0;
         }
 
         footer {
-            width: 100%;
-            margin-top: 60px;
-            padding-top: 25px;
-
+            margin-top: 50px;
+            padding-top: 24px;
             border-top: 2px solid #8b6d45;
 
-            text-align: center;
             color: #6b4a2d;
+            font-size: 17px;
             line-height: 1.8;
-        }
-
-        @media (max-width: 1000px) {
-            body {
-                overflow: auto;
-            }
-
-            .tree {
-                width: max-content;
-            }
+            text-align: center;
         }
 
         @media (max-width: 700px) {
             body {
-                padding: 25px;
+                padding: 25px 12px;
             }
 
             h1 {
-                font-size: 34px;
+                font-size: 33px;
             }
 
             h2 {
-                font-size: 19px;
+                margin-bottom: 30px;
+                font-size: 18px;
             }
 
-            #info {
-                width: calc(100vw - 16px);
-                max-height: calc(100vh - 16px);
+            #biography-modal {
+                width: calc(100vw - 14px);
+                max-height: calc(100vh - 14px);
+                border-width: 2px;
             }
 
-            .info-header {
-                padding: 14px 16px;
+            .modal-header {
+                padding: 13px 14px;
             }
 
-            #title {
+            #person-name {
                 font-size: 21px;
             }
 
-            .info-content {
+            #close-modal {
+                width: 38px;
+                height: 38px;
+                font-size: 25px;
+            }
+
+            .modal-body {
                 grid-template-columns: 1fr;
-                padding: 16px;
+                gap: 18px;
+                padding: 15px;
             }
 
             #person-photo {
                 width: auto;
                 max-width: 100%;
-                max-height: 420px;
+                max-height: 400px;
                 margin: 0 auto;
             }
 
-            #text {
+            #photo-placeholder {
+                min-height: 180px;
+            }
+
+            #person-years {
+                font-size: 18px;
+            }
+
+            #person-biography {
                 font-size: 16px;
             }
         }
@@ -326,21 +420,26 @@
     <h2>Генеалогическое древо XIX–XXI век</h2>
 
 
-    <!-- ЗАТЕМНЕНИЕ -->
+    <!-- Затемнение страницы -->
 
     <div id="overlay"></div>
 
 
-    <!-- ОКНО БИОГРАФИИ -->
+    <!-- Большое окно с фотографией и биографией -->
 
-    <div id="info">
+    <section
+        id="biography-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="person-name"
+    >
 
-        <div class="info-header">
+        <div class="modal-header">
 
-            <h3 id="title"></h3>
+            <h3 id="person-name"></h3>
 
             <button
-                id="close"
+                id="close-modal"
                 type="button"
                 aria-label="Закрыть биографию"
             >
@@ -349,319 +448,389 @@
 
         </div>
 
-        <div class="info-content">
+        <div class="modal-body">
 
-            <div>
+            <div class="photo-column">
+
                 <img
                     id="person-photo"
                     src=""
                     alt=""
                 >
+
+                <div id="photo-placeholder">
+                    Фотография пока не добавлена
+                </div>
+
             </div>
 
-            <div>
+            <div class="biography-column">
 
-                <div id="years"></div>
+                <div id="person-years"></div>
 
-                <div id="text"></div>
+                <div id="person-biography"></div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- ГЕНЕАЛОГИЧЕСКОЕ ДЕРЕВО -->
+    <!-- Генеалогическое древо -->
 
-    <div class="tree">
+    <div class="tree-wrapper">
 
-        <ul>
+        <div class="tree">
 
-            <li>
+            <ul>
 
-                <div
-                    class="person"
-                    onclick="showInfo('vasiliy')"
-                >
-                    Василий Емельянович Лапин
-                </div>
+                <li>
 
-                <ul>
+                    <button
+                        class="person has-biography"
+                        type="button"
+                        data-person="vasiliy"
+                    >
+                        Василий Емельянович Лапин
+                    </button>
 
-                    <!-- НАДЕЖДА -->
+                    <ul>
 
-                    <li>
+                        <!-- Надежда Васильевна -->
 
-                        <div
-                            class="person"
-                            onclick="showInfo('nadezhda')"
-                        >
-                            Надежда
-                        </div>
+                        <li>
 
-                        <ul>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="nadezhda"
+                            >
+                                Надежда
+                            </button>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('vera')"
-                                >
-                                    Вера
-                                </div>
-                            </li>
+                            <ul>
 
-                            <li>
+                                <li>
 
-                                <div
-                                    class="person"
-                                    onclick="showInfo('evgeniya')"
-                                >
-                                    Евгения
-                                </div>
+                                    <button
+                                        class="person"
+                                        type="button"
+                                        data-person="vera"
+                                    >
+                                        Вера
+                                    </button>
 
-                                <ul>
+                                </li>
 
-                                    <li>
-                                        <div
-                                            class="person"
-                                            onclick="showInfo('aleksandr')"
-                                        >
-                                            Александр
-                                        </div>
-                                    </li>
+                                <li>
 
-                                </ul>
+                                    <button
+                                        class="person"
+                                        type="button"
+                                        data-person="evgeniya"
+                                    >
+                                        Евгения
+                                    </button>
 
-                            </li>
+                                    <ul>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('antonina')"
-                                >
-                                    Антонина
-                                </div>
-                            </li>
+                                        <li>
 
-                        </ul>
+                                            <button
+                                                class="person"
+                                                type="button"
+                                                data-person="aleksandr"
+                                            >
+                                                Александр
+                                            </button>
 
-                    </li>
+                                        </li>
 
+                                    </ul>
 
-                    <!-- БОРИС -->
+                                </li>
 
-                    <li>
+                                <li>
 
-                        <div
-                            class="person"
-                            onclick="showInfo('boris')"
-                        >
-                            Борис
-                        </div>
+                                    <button
+                                        class="person"
+                                        type="button"
+                                        data-person="antonina"
+                                    >
+                                        Антонина
+                                    </button>
 
-                        <ul>
+                                </li>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('georgiy_borisovich')"
-                                >
-                                    Георгий
-                                </div>
-                            </li>
+                            </ul>
 
-                            <li>
+                        </li>
 
-                                <div
-                                    class="person"
-                                    onclick="showInfo('tamara')"
-                                >
-                                    Тамара
-                                </div>
 
-                                <ul>
+                        <!-- Борис Васильевич -->
 
-                                    <li>
-                                        <div
-                                            class="person"
-                                            onclick="showInfo('yuriy')"
-                                        >
-                                            Юрий
-                                        </div>
-                                    </li>
+                        <li>
 
-                                </ul>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="boris"
+                            >
+                                Борис
+                            </button>
 
-                            </li>
+                            <ul>
 
-                        </ul>
+                                <li>
 
-                    </li>
+                                    <button
+                                        class="person"
+                                        type="button"
+                                        data-person="georgiy_borisovich"
+                                    >
+                                        Георгий
+                                    </button>
 
+                                </li>
 
-                    <!-- ВЛАДИМИР -->
+                                <li>
 
-                    <li>
+                                    <button
+                                        class="person"
+                                        type="button"
+                                        data-person="tamara"
+                                    >
+                                        Тамара
+                                    </button>
 
-                        <div
-                            class="person"
-                            onclick="showInfo('vladimir')"
-                        >
-                            Владимир
-                        </div>
+                                    <ul>
 
-                        <ul>
+                                        <li>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('nina_vladimirovna')"
-                                >
-                                    Нина
-                                </div>
-                            </li>
+                                            <button
+                                                class="person"
+                                                type="button"
+                                                data-person="yuriy"
+                                            >
+                                                Юрий
+                                            </button>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('andrey')"
-                                >
-                                    Андрей
-                                </div>
-                            </li>
-
-                        </ul>
+                                        </li>
 
-                    </li>
+                                    </ul>
 
+                                </li>
 
-                    <!-- ЛЕОНИД -->
+                            </ul>
 
-                    <li>
+                        </li>
 
-                        <div
-                            class="person"
-                            onclick="showInfo('leonid')"
-                        >
-                            Леонид
-                        </div>
-
-                    </li>
 
+                        <!-- Владимир Васильевич -->
 
-                    <!-- СЕРГЕЙ -->
+                        <li>
 
-                    <li>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="vladimir"
+                            >
+                                Владимир
+                            </button>
 
-                        <div
-                            class="person"
-                            onclick="showInfo('sergey')"
-                        >
-                            Сергей
-                        </div>
+                            <ul>
 
-                        <ul>
+                                <li>
 
-                            <li>
-                                <div
-                                    class="person"
-                                    onclick="showInfo('irina_sergeevna')"
-                                >
-                                    Ирина
-                                </div>
-                            </li>
+                                    <button
+                                        class="person has-biography"
+                                        type="button"
+                                        data-person="nina_vladimirovna"
+                                    >
+                                        Нина
+                                    </button>
 
-                            <li>
+                                </li>
 
-                                <div
-                                    class="person"
-                                    onclick="showInfo('mikhail')"
-                                >
-                                    Михаил
-                                </div>
+                                <li>
 
-                                <ul>
+                                    <button
+                                        class="person has-biography"
+                                        type="button"
+                                        data-person="andrey_vladimirovich"
+                                    >
+                                        Андрей
+                                    </button>
 
-                                    <li>
-                                        <div
-                                            class="person"
-                                            onclick="showInfo('sergey_mikhailovich')"
-                                        >
-                                            Сергей
-                                        </div>
-                                    </li>
+                                </li>
 
-                                    <li>
+                            </ul>
 
-                                        <div
-                                            class="person"
-                                            onclick="showInfo('igor_mikhailovich')"
-                                        >
-                                            Игорь
-                                        </div>
+                        </li>
 
-                                        <ul>
 
-                                            <li>
+                        <!-- Леонид Васильевич -->
 
-                                                <div
-                                                    class="person"
-                                                    onclick="showInfo('dmitriy')"
-                                                >
-                                                    Дмитрий
-                                                </div>
+                        <li>
 
-                                                <ul>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="leonid"
+                            >
+                                Леонид
+                            </button>
 
-                                                    <li>
-                                                        <div
-                                                            class="person"
-                                                            onclick="showInfo('igor_dmitrievich')"
-                                                        >
-                                                            Игорь Дмитриевич
-                                                        </div>
-                                                    </li>
+                        </li>
 
-                                                    <li>
-                                                        <div
-                                                            class="person"
-                                                            onclick="showInfo('maksim_dmitrievich')"
-                                                        >
-                                                            Максим Дмитриевич
-                                                        </div>
-                                                    </li>
 
-                                                </ul>
+                        <!-- Павел Васильевич -->
 
-                                            </li>
+                        <li>
 
-                                            <li>
-                                                <div
-                                                    class="person"
-                                                    onclick="showInfo('mariya')"
-                                                >
-                                                    Мария
-                                                </div>
-                                            </li>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="pavel"
+                            >
+                                Павел
+                            </button>
 
-                                        </ul>
+                        </li>
 
-                                    </li>
 
-                                </ul>
+                        <!-- Сергей Васильевич -->
 
-                            </li>
+                        <li>
 
-                        </ul>
+                            <button
+                                class="person has-biography"
+                                type="button"
+                                data-person="sergey_vasilievich"
+                            >
+                                Сергей
+                            </button>
 
-                    </li>
+                            <ul>
 
-                </ul>
+                                <li>
 
-            </li>
+                                    <button
+                                        class="person has-biography"
+                                        type="button"
+                                        data-person="irina_sergeevna"
+                                    >
+                                        Ирина
+                                    </button>
 
-        </ul>
+                                </li>
+
+                                <li>
+
+                                    <button
+                                        class="person has-biography"
+                                        type="button"
+                                        data-person="mikhail"
+                                    >
+                                        Михаил
+                                    </button>                                    <ul>
+
+                                        <li>
+
+                                            <button
+                                                class="person has-biography"
+                                                type="button"
+                                                data-person="sergey_mikhailovich"
+                                            >
+                                                Сергей
+                                            </button>
+
+                                        </li>
+
+                                        <li>
+
+                                            <button
+                                                class="person has-biography"
+                                                type="button"
+                                                data-person="igor_mikhailovich"
+                                            >
+                                                Игорь
+                                            </button>
+
+                                            <ul>
+
+                                                <li>
+
+                                                    <button
+                                                        class="person has-biography"
+                                                        type="button"
+                                                        data-person="dmitriy"
+                                                    >
+                                                        Дмитрий
+                                                    </button>
+
+                                                    <ul>
+
+                                                        <li>
+
+                                                            <button
+                                                                class="person"
+                                                                type="button"
+                                                                data-person="igor_dmitrievich"
+                                                            >
+                                                                Игорь Дмитриевич
+                                                            </button>
+
+                                                        </li>
+
+                                                        <li>
+
+                                                            <button
+                                                                class="person"
+                                                                type="button"
+                                                                data-person="maksim_dmitrievich"
+                                                            >
+                                                                Максим Дмитриевич
+                                                            </button>
+
+                                                        </li>
+
+                                                    </ul>
+
+                                                </li>
+
+                                                <li>
+
+                                                    <button
+                                                        class="person has-biography"
+                                                        type="button"
+                                                        data-person="mariya_igorevna"
+                                                    >
+                                                        Мария
+                                                    </button>
+
+                                                </li>
+
+                                            </ul>
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+
+        </div>
 
     </div>
 
@@ -680,16 +849,6 @@
 
 
     <script>
-        /*
-        Здесь хранятся все биографии.
-
-        Чтобы добавить человеку фотографию:
-        1. загрузите изображение в репозиторий;
-        2. укажите точное название в поле photo.
-
-        Чтобы пока не показывать фотографию:
-        photo: ""
-        */
 
         const biographies = {
 
@@ -699,19 +858,15 @@
                 photo: "",
                 text: `
                     <p>
-                        Первый известный предок семьи, о котором
-                        сохранились подробные сведения.
-                    </p>
-
-                    <p>
-                        Василий Емельянович служил почтово-телеграфным
-                        чиновником в городе Кашине бывшей Тверской губернии.
+                        Василий Емельянович Лапин служил
+                        почтово-телеграфным чиновником в городе Кашине
+                        Тверской губернии.
                     </p>
 
                     <p>
                         За 35 лет непорочной службы он был удостоен
-                        звания личного дворянина. Это звание
-                        не передавалось детям по наследству.
+                        звания личного дворянина.
+                        Это звание не передавалось его детям по наследству.
                     </p>
 
                     <p>
@@ -720,9 +875,9 @@
                     </p>
 
                     <p>
-                        Во втором браке с Любовью Августовной у него
-                        родились сыновья Георгий, Борис, Владимир,
-                        Павел, Леонид и Сергей.
+                        Во втором браке с Любовью Августовной
+                        у него родились сыновья Георгий, Борис,
+                        Владимир, Павел, Леонид и Сергей.
                     </p>
                 `
             },
@@ -734,12 +889,15 @@
                 photo: "",
                 text: `
                     <p>
-                        Надежда Васильевна — дочь Василия Емельяновича
-                        Лапина от первого брака.
+                        Надежда Васильевна — дочь
+                        Василия Емельяновича Лапина от первого брака.
                     </p>
 
                     <p>
-                        У неё было три дочери: Вера, Евгения и Антонина.
+                        У неё были дочери Вера, Евгения и Антонина.
+                    </p>
+
+                    <p>
                         У Евгении был сын Александр Ягнурский.
                     </p>
                 `
@@ -752,7 +910,13 @@
                 photo: "",
                 text: `
                     <p>
-                        Сведения о Вере пока уточняются.
+                        Вера — одна из дочерей
+                        Надежды Васильевны Шульц.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
                     </p>
                 `
             },
@@ -764,7 +928,8 @@
                 photo: "",
                 text: `
                     <p>
-                        Евгения — одна из дочерей Надежды Васильевны.
+                        Евгения — одна из дочерей
+                        Надежды Васильевны Шульц.
                     </p>
 
                     <p>
@@ -780,4 +945,728 @@
                 photo: "",
                 text: `
                     <p>
-             
+                        Александр Ягнурский — сын Евгении.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            antonina: {
+                name: "Антонина",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Антонина — одна из дочерей
+                        Надежды Васильевны Шульц.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            boris: {
+                name: "Лапин Борис Васильевич",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Борис Васильевич — один из сыновей
+                        Василия Емельяновича и Любови Августовны Лапиных.
+                    </p>
+
+                    <p>
+                        После окончания гимназии он служил
+                        телеграфным чиновником в Костроме.
+                    </p>
+
+                    <p>
+                        Борис Васильевич женился
+                        на Ольге Георгиевне Равиковской.
+                    </p>
+
+                    <p>
+                        В семье родились сын Георгий и дочь Тамара.
+                    </p>
+
+                    <p>
+                        Борис Васильевич имел слабое здоровье
+                        и умер от туберкулёза в городе Кимры.
+                    </p>
+
+                    <p>
+                        Ольга Георгиевна умерла
+                        в Ленинграде в 1952 году.
+                    </p>
+                `
+            },
+
+
+            georgiy_borisovich: {
+                name: "Георгий Борисович Лапин",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Георгий Борисович — сын
+                        Бориса Васильевича и Ольги Георгиевны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            tamara: {
+                name: "Тамара Борисовна",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Тамара Борисовна — дочь
+                        Бориса Васильевича и Ольги Георгиевны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            yuriy: {
+                name: "Юрий",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Подробные биографические сведения
+                        о Юрии пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            vladimir: {
+                name: "Лапин Владимир Васильевич",
+                years: "1882–1933",
+                photo: "",
+                text: `
+                    <p>
+                        Владимир Васильевич родился в 1882 году
+                        в Рыбинске Тверской губернии.
+                    </p>
+
+                    <p>
+                        После обучения в гимназии он поступил
+                        в юнкерское пехотное училище.
+                    </p>
+
+                    <p>
+                        В чине подпоручика участвовал
+                        в русско-японской войне в Маньчжурии.
+                    </p>
+
+                    <p>
+                        В 1906 году Владимир Васильевич женился.
+                    </p>
+
+                    <p>
+                        Позднее служил делопроизводителем
+                        в уездном съезде мировых судей в Рыбинске.
+                    </p>
+
+                    <p>
+                        После революции работал народным судьёй.
+                    </p>
+
+                    <p>
+                        Владимир Васильевич умер
+                        от туберкулёза в 1933 году.
+                    </p>
+
+                    <p>
+                        У него были дочь Нина,
+                        родившаяся в 1908 году,
+                        и сын Андрей, родившийся в 1916 году.
+                    </p>
+                `
+            },
+
+
+            nina_vladimirovna: {
+                name: "Нина Владимировна",
+                years: "Родилась в 1908 году",
+                photo: "",
+                text: `
+                    <p>
+                        Нина Владимировна — дочь
+                        Владимира Васильевича Лапина.
+                    </p>
+
+                    <p>
+                        Родилась в 1908 году.
+                    </p>
+
+                    <p>
+                        Подробные сведения о её жизни
+                        можно будет дополнить позднее.
+                    </p>
+                `
+            },
+
+
+            andrey_vladimirovich: {
+                name: "Андрей Владимирович",
+                years: "Родился в 1916 году",
+                photo: "",
+                text: `
+                    <p>
+                        Андрей Владимирович — сын
+                        Владимира Васильевича Лапина.
+                    </p>
+
+                    <p>
+                        Родился в 1916 году.
+                    </p>
+
+                    <p>
+                        Подробные сведения о его жизни
+                        можно будет дополнить позднее.
+                    </p>
+                `
+            },
+
+
+            leonid: {
+                name: "Лапин Леонид Васильевич",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Леонид Васильевич — сын
+                        Василия Емельяновича
+                        и Любови Августовны Лапиных.
+                    </p>
+
+                    <p>
+                        Он был морским офицером.
+                    </p>
+
+                    <p>
+                        Во время революционных событий
+                        Леонид Васильевич уехал
+                        из Севастополя в Турцию.
+                    </p>
+
+                    <p>
+                        По сохранившимся семейным сведениям,
+                        позднее он поселился в Америке
+                        и имел собственное небольшое дело.
+                    </p>
+
+                    <p>
+                        Его жену звали Екатерина.
+                        В семье был сын Виталий.
+                    </p>
+
+                    <p>
+                        В революционные годы Виталий оказался
+                        у родственников матери в Бельгии,
+                        где впоследствии окончил колледж.
+                    </p>
+                `
+            },
+
+
+            pavel: {
+                name: "Лапин Павел Васильевич",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Павел Васильевич — один из сыновей
+                        Василия Емельяновича
+                        и Любови Августовны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        о Павле Васильевиче
+                        пока не добавлены полностью.
+                    </p>
+                `
+            },
+
+
+            sergey_vasilievich: {
+                name: "Лапин Сергей Васильевич",
+                years: "1891–1944",
+                photo: "",
+                text: `
+                    <p>
+                        Сергей Васильевич родился в 1891 году
+                        в городе Кашине Тверской губернии.
+                    </p>
+
+                    <p>
+                        После окончания реального училища
+                        в 1912 году поступил
+                        в Московское техническое училище,
+                        ныне МГТУ имени Н. Э. Баумана,
+                        на механическое отделение.
+                    </p>
+
+                    <p>
+                        В 1916 году был мобилизован
+                        и направлен в школу прапорщиков в Тифлисе.
+                    </p>
+
+                    <p>
+                        После революции служил
+                        в Красной армии в Царицыне.
+                    </p>
+
+                    <p>
+                        В дальнейшем работал
+                        в организациях «Нижнепромторг»
+                        и «Красный Октябрь».
+                    </p>
+
+                    <p>
+                        26 июля 1938 года Сергей Васильевич
+                        был арестован органами НКВД
+                        по ложному обвинению
+                        и осуждён на десять лет
+                        без права переписки.
+                    </p>
+
+                    <p>
+                        Согласно семейным сведениям,
+                        он умер в 1944 году.
+                    </p>
+
+                    <p>
+                        Впоследствии дело было прекращено,
+                        а вынесенное постановление отменено.
+                    </p>
+
+                    <p>
+                        Сергей Васильевич был женат
+                        на Антонине Михайловне.
+                    </p>
+
+                    <p>
+                        В семье родились дочь Ирина
+                        и сын Михаил.
+                    </p>
+                `
+            },
+
+
+            irina_sergeevna: {
+                name: "Лапина Ирина Сергеевна",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Ирина Сергеевна — дочь
+                        Сергея Васильевича
+                        и Антонины Михайловны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные сведения о её жизни
+                        можно будет дополнить позднее.
+                    </p>
+                `
+            },
+
+
+            mikhail: {
+                name: "Лапин Михаил Сергеевич",
+                years: "1922–2010",
+                photo: "Screenshot_20260726-115436~2.png",
+                text: `
+                    <p>
+                        Михаил Сергеевич Лапин родился
+                        в 1922 году в Царицыне,
+                        впоследствии переименованном
+                        в Сталинград, а затем в Волгоград.
+                    </p>
+
+                    <p>
+                        В 1940 году он окончил школу
+                        и поступил в Сталинградский
+                        тракторостроительный техникум.
+                    </p>
+
+                    <p>
+                        26 мая 1941 года
+                        Михаил Сергеевич был призван
+                        в Красную армию.
+                    </p>
+
+                    <p>
+                        Во время Великой Отечественной войны
+                        участвовал в боях на Центральном,
+                        Сталинградском и Южном фронтах.
+                    </p>
+
+                    <p>
+                        Он служил сапёром, разведчиком
+                        и командиром отделения разведки.
+                    </p>
+
+                    <p>
+                        В 1943 году был направлен
+                        в Челябинское танко-техническое училище.
+                    </p>
+
+                    <p>
+                        Окончил училище в 1944 году,
+                        получив звание младшего лейтенанта.
+                    </p>
+
+                    <p>
+                        После окончания войны
+                        продолжил военную службу.
+                    </p>
+
+                    <p>
+                        В 1952 году поступил
+                        в Военную академию бронетанковых войск
+                        на инженерный факультет
+                        и окончил её в 1957 году.
+                    </p>
+
+                    <p>
+                        После увольнения в запас работал
+                        в научно-производственном объединении
+                        «Полимер» инженером-конструктором,
+                        а затем инженером-технологом.
+                    </p>
+
+                    <p>
+                        В 1949 году Михаил Сергеевич женился
+                        на Ирине Ивановне Соловьёвой.
+                    </p>
+
+                    <p>
+                        В семье родились два сына —
+                        Сергей и Игорь.
+                    </p>
+
+                    sergey_mikhailovich: {
+                name: "Лапин Сергей Михайлович",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Сергей Михайлович — старший сын
+                        Михаила Сергеевича
+                        и Ирины Ивановны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        о Сергее Михайловиче
+                        пока можно будет дополнить позднее.
+                    </p>
+                `
+            },
+
+
+            igor_mikhailovich: {
+                name: "Лапин Игорь Михайлович",
+                years: "Родился в апреле 1957 года",
+                photo: "",
+                text: `
+                    <p>
+                        Игорь Михайлович — младший сын
+                        Михаила Сергеевича
+                        и Ирины Ивановны Лапиных.
+                    </p>
+
+                    <p>
+                        Родился в апреле 1957 года в Москве.
+                    </p>
+
+                    <p>
+                        Школу окончил в 1974 году
+                        во Владикавказе.
+                    </p>
+
+                    <p>
+                        В старших классах занимался
+                        пулевой стрельбой
+                        и выполнил норматив
+                        кандидата в мастера спорта.
+                    </p>
+
+                    <p>
+                        В 1974 году поступил
+                        в Орджоникидзевское высшее
+                        командное училище.
+                    </p>
+
+                    <p>
+                        Окончил его в 1978 году
+                        и был направлен
+                        для прохождения службы в ГДР.
+                    </p>
+
+                    <p>
+                        Впоследствии служил в Закавказье.
+                    </p>
+
+                    <p>
+                        Занимал должности командира роты,
+                        начальника штаба батальона
+                        и офицера оперативного отдела
+                        штаба дивизии.
+                    </p>
+
+                    <p>
+                        С 1993 года служил
+                        в Санкт-Петербурге.
+                    </p>
+
+                    <p>
+                        В январе 1994 года
+                        получил звание подполковника.
+                    </p>
+
+                    <p>
+                        Женат на Альфии Альтафовне Лапиной.
+                    </p>
+
+                    <p>
+                        В семье родились сын Дмитрий
+                        и дочь Мария.
+                    </p>
+                `
+            },
+
+
+            dmitriy: {
+                name: "Лапин Дмитрий Игоревич",
+                years: "Родился в 1980 году",
+                photo: "",
+                text: `
+                    <p>
+                        Дмитрий Игоревич — сын
+                        Игоря Михайловича
+                        и Альфии Альтафовны Лапиных.
+                    </p>
+
+                    <p>
+                        Родился в 1980 году в Ленинграде.
+                    </p>
+
+                    <p>
+                        Вместе с родителями переезжал
+                        из гарнизона в гарнизон.
+                    </p>
+
+                    <p>
+                        Учился в школах Ахалцихе,
+                        Владикавказа
+                        и Санкт-Петербурга.
+                    </p>
+
+                    <p>
+                        В 1998 году поступил
+                        в Санкт-Петербургский государственный
+                        технический университет
+                        на факультет технической кибернетики.
+                    </p>
+
+                    <p>
+                        Женат на Татьяне Николаевне.
+                    </p>
+
+                    <p>
+                        В семье родились сыновья
+                        Игорь Дмитриевич
+                        и Максим Дмитриевич Лапины.
+                    </p>
+                `
+            },
+
+
+            igor_dmitrievich: {
+                name: "Лапин Игорь Дмитриевич",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Игорь Дмитриевич — сын
+                        Дмитрия Игоревича
+                        и Татьяны Николаевны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            maksim_dmitrievich: {
+                name: "Лапин Максим Дмитриевич",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Максим Дмитриевич — сын
+                        Дмитрия Игоревича
+                        и Татьяны Николаевны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные биографические сведения
+                        пока не добавлены.
+                    </p>
+                `
+            },
+
+
+            mariya_igorevna: {
+                name: "Лапина Мария Игоревна",
+                years: "",
+                photo: "",
+                text: `
+                    <p>
+                        Мария Игоревна — дочь
+                        Игоря Михайловича
+                        и Альфии Альтафовны Лапиных.
+                    </p>
+
+                    <p>
+                        Подробные сведения о её жизни
+                        можно будет дополнить позднее.
+                    </p>
+                `
+            }
+
+        };
+
+
+        const modal = document.getElementById("biography-modal");
+        const overlay = document.getElementById("overlay");
+        const closeModalButton = document.getElementById("close-modal");
+
+        const personName = document.getElementById("person-name");
+        const personYears = document.getElementById("person-years");
+        const personBiography = document.getElementById("person-biography");
+
+        const personPhoto = document.getElementById("person-photo");
+        const photoPlaceholder = document.getElementById("photo-placeholder");
+
+
+        function openBiography(personId) {
+
+            const person = biographies[personId];
+
+            if (!person) {
+                return;
+            }
+
+            personName.textContent = person.name || "";
+            personYears.textContent = person.years || "";
+            personBiography.innerHTML = person.text || `
+                <p>
+                    Подробные биографические сведения
+                    пока не добавлены.
+                </p>
+            `;
+
+            if (person.photo) {
+
+                personPhoto.src = person.photo;
+                personPhoto.alt = "Фотография — " + person.name;
+
+                personPhoto.style.display = "block";
+                photoPlaceholder.style.display = "none";
+
+            } else {
+
+                personPhoto.removeAttribute("src");
+                personPhoto.alt = "";
+
+                personPhoto.style.display = "none";
+                photoPlaceholder.style.display = "flex";
+
+            }
+
+            personPhoto.onerror = function () {
+
+                personPhoto.style.display = "none";
+                photoPlaceholder.style.display = "flex";
+
+            };
+
+            overlay.classList.add("open");
+            modal.classList.add("open");
+            document.body.classList.add("modal-open");
+
+            closeModalButton.focus();
+        }
+
+
+        function closeBiography() {
+
+            overlay.classList.remove("open");
+            modal.classList.remove("open");
+            document.body.classList.remove("modal-open");
+
+        }
+
+
+        document.querySelectorAll(".person").forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                const personId = button.dataset.person;
+
+                openBiography(personId);
+
+            });
+
+        });
+
+
+        closeModalButton.addEventListener("click", closeBiography);
+
+
+        overlay.addEventListener("click", closeBiography);
+
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key === "Escape") {
+                closeBiography();
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
